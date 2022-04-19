@@ -74,5 +74,6 @@ class WikipediaSearch:
 
 
 if __name__ == '__main__':
+    # options: 'random' and 'universal-sentence-encoder'
     g = WikipediaSearch('random')
     print(g.search('New York State Route 373', 'Canada'))
