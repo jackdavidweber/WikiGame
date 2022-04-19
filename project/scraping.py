@@ -24,7 +24,7 @@ def request_wiki(wiki_url):
         
 
 # %%
-def get_wiki_graph_one_step(l):
+def get_wiki_graph_one_step(l, verbose=True):
     """
     Takes a list of wikipedia articles with no repeats. 
     Returns A dictionary where keys are items in original list. 
@@ -45,7 +45,8 @@ def get_wiki_graph_one_step(l):
             data_from_url = response.text
             soup = BeautifulSoup(data_from_url,PARSER)
 
-            print(f"({i}/{len(l)}): {title}")
+            if verbose:
+                print(f"({i}/{len(l)}): {title}")
 
             # Capture all referenced articles within article
             link_set = set()  # Use a set to ensure no repeats
