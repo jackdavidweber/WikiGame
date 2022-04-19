@@ -1,3 +1,4 @@
+import argparse
 from collections import defaultdict
 import json
 import os
@@ -5,9 +6,12 @@ import os
 from scraping import get_wiki_graph_one_step
 
 import numpy as np
+import tensorflow as tf
 import tensorflow_hub as hub
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+tf.get_logger().setLevel('ERROR')
+tf.autograph.set_verbosity(3)
 
 
 class WikipediaSearch:
@@ -21,7 +25,7 @@ class WikipediaSearch:
         self.setup_method()
 
     def setup_method(self):
-        if self.method == 'universal-sentence-encoder':
+        if self.method == 'semantic':
             self.embed = hub.load('https://tfhub.dev/google/universal-sentence-encoder/4')
         elif self.method == 'random':
             self.rng = np.random.default_rng()
@@ -29,19 +33,20 @@ class WikipediaSearch:
             raise ValueError(f'method {self.method} not recognised')
 
     def predict(self, target, links):
-        if self.method == 'universal-sentence-encoder':
+        if self.method == 'semantic':
             embeddings = self.embed([target] + links).numpy()
             cosines = np.dot(embeddings[0], embeddings[1:].T)
             return [links[i] for i in cosines.argsort()]
         elif self.method == 'random':
             return self.rng.permutation(links).tolist()
 
-    def search(self, start, end):
+    def search(self, start, end, limit=100):
         to_visit = [start]
         visited = defaultdict(bool)
         previous = defaultdict(bool)
+        steps = 0
 
-        while len(to_visit) > 0:
+        while len(to_visit) > 0 and steps < limit:
             current = to_visit.pop()
             print(current)
 
@@ -61,6 +66,8 @@ class WikipediaSearch:
                 to_visit.append(l)
                 previous[l] = current
 
+            steps += 1
+
         # Reconstruct the discovered path using previous
         if visited[end]:
             path = [end]
@@ -74,6 +81,13 @@ class WikipediaSearch:
 
 
 if __name__ == '__main__':
-    # options: 'random' and 'universal-sentence-encoder'
-    g = WikipediaSearch('random')
-    print(g.search('New York State Route 373', 'Canada'))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('start', type=str)
+    parser.add_argument('end', type=str)
+    parser.add_argument('method', type=str)
+    args = parser.parse_args()
+
+    g1 = WikipediaSearch(args.method)
+    print()
+    print(f'{args.method}:')
+    print(g1.search(args.start, args.end))
