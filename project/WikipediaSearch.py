@@ -16,19 +16,23 @@ tf.autograph.set_verbosity(3)
 
 class WikipediaSearch:
 
-    def __init__(self, method, graph_file=''):
+    def __init__(self, method, graph_file='', verbose=False, seed=42):
         if graph_file:
             with open(graph_file) as f:
                 self.data = json.load(f)
 
+        self.seed=seed
+
         self.method = method
         self.setup_method()
+
+        self.verbose=verbose
 
     def setup_method(self):
         if self.method == 'semantic':
             self.embed = hub.load('https://tfhub.dev/google/universal-sentence-encoder/4')
         elif self.method == 'random':
-            self.rng = np.random.default_rng()
+            self.rng = np.random.default_rng(seed=self.seed)
         else:
             raise ValueError(f'method {self.method} not recognised')
 
@@ -48,7 +52,9 @@ class WikipediaSearch:
 
         while len(to_visit) > 0 and steps < limit:
             current = to_visit.pop()
-            print(current)
+            
+            if self.verbose:
+                print(current)
 
             visited[current] = True
             if current == end:
