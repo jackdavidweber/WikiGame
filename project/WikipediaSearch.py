@@ -10,8 +10,9 @@ import tensorflow as tf
 import tensorflow_hub as hub
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-tf.get_logger().setLevel('ERROR')
 tf.autograph.set_verbosity(3)
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+tf.get_logger().setLevel('ERROR')
 
 
 class WikipediaSearch:
