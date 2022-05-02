@@ -4,6 +4,8 @@ _Jack Weber, Adam Guo_
 
 _[Presentation link](https://docs.google.com/presentation/d/1GxHRYCPbECe-QAT_uPcoYR31yHpl1f1XA6l_k-nwTvw)_
 
+_[GitHub repository](https://github.com/jackdavidweber/WikiGame)_
+
 The [Wikipedia Game](https://en.wikipedia.org/wiki/Wikipedia:Wiki_Game) is a game where players start at the same page on the Wikipedia website and try to navigate to a target page using only the hyperlinks on each page. The goal is to reach the target page in the fewest clicks (or least time). For our project, we wanted to investigate methods for computationally playing the Wikipedia Game and compare them to human players.
 
 "Solving" the Wikipedia game is pretty straightforward. We can model the website as a directed graph where pages are represented by nodes, and an edge exists from page A to page B if page A links to page B. Hence, all we need is a graph search algorithm like breadth first search to find the shortest path. [Six Degrees of Wikipedia](https://www.sixdegreesofwikipedia.com/) demonstrates this in action: given any two pages, it computes the shortest paths between them. For this project, we were more interested in creating an algorithm that models the way a human plays the Wikipedia game. A human player doesn't have access to the entire Wikipedia page graph, and if they did it would defeat the purpose of the game, which is to explore and exploit connections between concepts in our collective knowledge.
